@@ -1,0 +1,672 @@
+<?xml version="1.0"?>
+<sdf version="1.10">
+    <world name="robot_project">
+        <physics name="1ms" type="ignored">
+            <max_step_size>0.02</max_step_size>
+            <real_time_factor>1.0</real_time_factor>
+        </physics>
+        <plugin filename="gz-sim-physics-system" 
+                name="gz::sim::systems::Physics">
+        </plugin>
+        <plugin filename="gz-sim-user-commands-system" 
+                name="gz::sim::systems::UserCommands">
+        </plugin>
+        <plugin filename="gz-sim-scene-broadcaster-system" 
+                name="gz::sim::systems::SceneBroadcaster">
+        </plugin>
+        <plugin filename="gz-sim-imu-system"
+                name="gz::sim::systems::Imu">
+        </plugin>
+        <plugin filename="gz-sim-sensors-system"
+                name="gz::sim::systems::Sensors">
+        <render_engine>ogre2</render_engine>
+        </plugin>
+
+        <!--Moving forward-->
+        <plugin filename="gz-sim-triggered-publisher-system" 
+                        name="gz::sim::systems::TriggeredPublisher">
+            <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+                <match field="data">87</match>  <!-- W key value-->
+            </input>
+            <output type="gz.msgs.Twist" topic="/model/drive_robot/cmd_vel">
+                linear: {x: 0.5}, angular: {z: 0.0}
+            </output>
+        </plugin>
+
+        <!--Moving backward-->
+        <plugin filename="gz-sim-triggered-publisher-system" 
+                        name="gz::sim::systems::TriggeredPublisher">
+            <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+                <match field="data">88</match> <!-- X key value-->
+            </input>
+            <output type="gz.msgs.Twist" topic="/model/drive_robot/cmd_vel">
+                linear: {x: -0.5}, angular: {z: 0.0}
+            </output>
+        </plugin>
+
+        <!--Turning Left-->
+        <plugin filename="gz-sim-triggered-publisher-system" 
+                        name="gz::sim::systems::TriggeredPublisher">
+            <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+                <match field="data">65</match> <!-- A key value-->
+            </input>
+            <output type="gz.msgs.Twist" topic="/model/drive_robot/cmd_vel">
+                linear: {x: 0.0}, angular: {z: 0.5}
+            </output>
+        </plugin>
+
+        <!--Turning Right-->
+        <plugin filename="gz-sim-triggered-publisher-system" 
+                        name="gz::sim::systems::TriggeredPublisher">
+            <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+                <match field="data">68</match> <!-- D key value-->
+            </input> 
+            <output type="gz.msgs.Twist" topic="/model/drive_robot/cmd_vel">
+                linear: {x: 0.0}, angular: {z: -0.5}
+            </output>
+        </plugin>
+
+        <!-- Stopping the robot-->
+        <plugin filename="gz-sim-triggered-publisher-system" 
+                        name="gz::sim::systems::TriggeredPublisher">
+            <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+                <match field="data">83</match> <!-- S key value-->
+            </input>
+            <output type="gz.msgs.Twist" topic="/model/drive_robot/cmd_vel">
+                linear: {x: 0.0}, angular: {z: 0.0}
+            </output>
+        </plugin>
+        
+        <light type="directional" name="sun">
+            <cast_shadows>true</cast_shadows>
+            <pose>0 0 10 0 0 0</pose>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+            <attenuation>
+                <range>1000</range>
+                <constant>0.9</constant>
+                <linear>0.01</linear>
+                <quadratic>0.001</quadratic>
+            </attenuation>
+            <direction>-0.5 0.1 -0.9</direction>
+        </light>
+
+        <model name="ground_plane">
+            <static>true</static>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                        </plane>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                            <size>300 300</size>
+                        </plane>
+                    </geometry>
+                    <material>
+                        <ambient>0.8 0.8 0.8 1</ambient>
+                        <diffuse>0.8 0.8 0.8 1</diffuse>
+                        <specular>0.8 0.8 0.8 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <!-- Contents of the main room-->
+        <model name="mainroom_front_wall">
+            <static>true</static>
+            <pose relative_to="ground_plane">2.2 1.25 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>0.2 5.0 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.2 5.0 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="mainroom_left_wall">
+            <static>true</static>
+            <pose relative_to="world">-1.5 3.75 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>5.0 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>5.0 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="mainroom_right_wall">
+            <static>true</static>
+            <pose relative_to="world">-0.3 -1.25 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>5.0 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>5.0 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="mainroom_behind_wall">
+            <static>true</static>
+            <pose relative_to="ground_plane">-4 -2.25 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>0.2 12.0 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.2 12.0 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box1">
+            <static>true</static>
+            <pose relative_to="world">0 2.5 0.5 0 0 0</pose>
+            <link name="box1">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>0.5 0.5 1</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.5 0.5 1</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.5 0.5 0.5 1</ambient>
+                        <diffuse>0.5 0.5 0.5 1</diffuse>
+                        <specular>0.5 0.5 0.5 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box2">
+            <static>true</static>
+            <pose relative_to="world">-2 2.8 0.5 0 0 0</pose>
+            <link name="box2">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>0.5 0.5 1</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.5 0.5 1</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.5 0.5 0.5 1</ambient>
+                        <diffuse>0.5 0.5 0.5 1</diffuse>
+                        <specular>0.5 0.5 0.5 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box3">
+            <static>true</static>
+            <pose relative_to="world">-1.4 -0.8 0.5 0 0 0</pose>
+            <link name="box3">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>0.5 0.5 1</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.5 0.5 1</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.5 0.5 0.5 1</ambient>
+                        <diffuse>0.5 0.5 0.5 1</diffuse>
+                        <specular>0.5 0.5 0.5 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="box4">
+            <static>true</static>
+            <pose relative_to="world">0 3 0.5 0 0 0</pose>
+            <link name="box4">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>0.5 0.5 1</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.5 0.5 1</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.5 0.5 0.5 1</ambient>
+                        <diffuse>0.5 0.5 0.5 1</diffuse>
+                        <specular>0.5 0.5 0.5 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <!-- Adding Tables to world-->
+        <include>
+            <name>mainroom_BedTable1</name>
+            <uri>
+            https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedTable
+            </uri>
+            <pose relative_to="ground_plane">-3.3 0.2 0 0 0 -3.1415</pose>
+        </include>
+        <include>
+            <name>mainroom_BedTable2</name>
+            <uri>
+            https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedTable
+            </uri>
+            <pose relative_to="ground_plane">-3.3 1 0 0 0 3.1415</pose>
+        </include>
+        <include>
+            <name>mainroom_BedTable3</name>
+            <uri>
+            https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedTable
+            </uri>
+            <pose relative_to="ground_plane">-3.3 1.8 0 0 0 3.1415</pose>
+        </include>
+
+        <!-- Contents of the left side room-->
+        <model name="left_sideroom_bottom_wall">
+            <static>true</static>
+            <pose relative_to="ground_plane">0.5 5.35 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>0.2 3.0 2.0 0 0 0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.2 3.0 2.0 0 0 0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="leftside_room_left_wall">
+            <static>true</static>
+            <pose relative_to="ground_plane">3.0 6.85 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>5.0 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>5.0 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="leftside_room_front_wall">
+            <static>true</static>
+            <pose relative_to="ground_plane">5.5 3.85 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>0.2 6.0 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.2 6.0 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="leftside_room_right_wall">
+            <static>true</static>
+            <pose relative_to="ground_plane">3.8 1.15 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>3.2 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>3.2 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <!-- Adding bookshelf to left room-->
+        <include>
+            <name>leftroom_bookshelf1</name>
+            <uri>
+            https://fuel.gazebosim.org/1.0/OpenRobotics/models/Bookshelf
+            </uri>
+            <pose relative_to="ground_plane">1.3 6.5 0 0 0 0</pose>
+        </include>
+        <include>
+            <name>leftroom_bookshelf2</name>
+            <uri>
+            https://fuel.gazebosim.org/1.0/OpenRobotics/models/Bookshelf
+            </uri>
+            <pose relative_to="ground_plane">2.3 6.5 0 0 0 0</pose>
+        </include>
+
+        <!-- Adding coffee table and chair in left room-->
+        <include>
+            <name>leftroom_coffeetable</name>
+            <uri>
+            https://fuel.gazebosim.org/1.0/OpenRobotics/models/CoffeeTable
+            </uri>
+            <pose relative_to="ground_plane">4.0 2.5 0 0 0 0</pose>
+        </include>
+        <include>
+            <name>leftroom_chair</name>
+            <uri>
+            https://fuel.gazebosim.org/1.0/will0993/models/WoodenChair
+            </uri>
+            <pose relative_to="ground_plane">4.0 3.2 0 0 0 -1.57</pose>
+        </include>
+
+        <!-- Contents of lower right hallway-->
+        <model name="horizontalhallway_top_wall">
+            <static>true</static>
+            <pose relative_to="ground_plane">-2.7 -3.15 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>0.2 3.8 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.2 3.8 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="verticalhallway_left_wall">
+            <static>true</static>
+            <pose relative_to="ground_plane">-1.3 -4.9 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>2.6 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>2.6 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="verticalhallway_right_wall">
+            <static>true</static>
+            <pose relative_to="ground_plane">0.5 -7.9 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>9.0 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>9.0 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <!-- Adiing refrigerator to hallway-->
+        <include>
+            <name>rightroom_refrigerator</name>
+            <uri>
+            https://fuel.gazebosim.org/1.0/OpenRobotics/models/Refrigerator
+            </uri>
+            <pose relative_to="ground_plane">-3.2 -7.2 0 0 0 1.57</pose>
+        </include>
+
+        <!-- Contents of right room-->
+        <model name="rightroom_front_wall">
+            <static>true</static>
+            <pose relative_to="ground_plane">5.0 -5.5 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>0.2 5.0 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.2 5.0 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="rightroom_left_wall">
+            <static>true</static>
+            <pose relative_to="ground_plane">2.5 -3.0 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>5.0 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>5.0 0.2 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <model name="rightroom_back_wall">
+            <static>true</static>
+            <pose relative_to="ground_plane">0 -4.0 1.0 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>0.2 2.0 2.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.2 2.0 2.0</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <ambient>0.523 0.367 0.234 1</ambient>
+                        <diffuse>0.523 0.367 0.234 1</diffuse>
+                        <specular>0.238 0.219 0.273 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <!-- Adding Sofas, warehouse bucket to right room-->
+        <include>
+            <name>rightroom_sofa1</name>
+            <uri>
+            https://fuel.gazebosim.org/1.0/sebbyjp/models/Sofa
+            </uri>
+            <pose relative_to="ground_plane">1.2 -3.8 0 0 0 -1.57</pose>
+        </include>
+        <include>
+            <name>rightroom_sofa2</name>
+            <uri>
+            https://fuel.gazebosim.org/1.0/sebbyjp/models/Sofa
+            </uri>
+            <pose relative_to="ground_plane">3.3 -3.8 0 0 0 -1.57</pose>
+        </include>
+    </world>
+</sdf>
